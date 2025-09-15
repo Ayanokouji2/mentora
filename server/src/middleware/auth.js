@@ -29,7 +29,7 @@ const teacherProtectRoute = async (req, res, next) => {
   next();
 };
 
-const adminProtectRoute = async (req, res, next) => {
+const adminProtectRoute = async  (req, res, next) => {
   const token = req.cookies.admin_token;
   if (!token) {
     throw new ApiError(401, "Access token is required");

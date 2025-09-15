@@ -1,5 +1,5 @@
 import _ from "lodash";
-import { ADMIN_SECRET_KEY, JWT_SECRET_KEY } from "../constant/config";
+import { ADMIN_SECRET_KEY, JWT_SECRET_KEY } from "../constant/config.js";
 
 
 
@@ -26,4 +26,4 @@ const logout = (_, res) => {
   });
 };
 
-export { logout, adminLogin, createClass };
+export { logout, adminLogin };

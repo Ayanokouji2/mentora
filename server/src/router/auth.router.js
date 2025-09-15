@@ -4,6 +4,7 @@ import {
   studentLoginSchema,
   studentSignupSchema,
 } from "../schema/student/auth.schema.js";
+
 import {
   studentSignup,
   studentLogin,
@@ -18,8 +19,9 @@ import {
   teacherSignupSchema,
 } from "../schema/teacher/auth.teacher.js";
 
-const authRouter = express.Router();
 
+
+const authRouter = express.Router();
 // student auth route
 authRouter
   .route("/student/signup")

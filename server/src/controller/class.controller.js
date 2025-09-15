@@ -1,7 +1,8 @@
+import { asyncHandler } from "../middleware/error.js";
 import classModel from "../model/class.model.js";
 import { ApiError } from "../utils/error.js";
 
-const createClass = async (req, res) => {
+const createClass =asyncHandler( async (req, res) => {
   const { class_name, section } = req.body;
   const isClassExists = await classModel.findOne({ class_name, section });
   if (isClassExists) {
@@ -11,6 +12,6 @@ const createClass = async (req, res) => {
   return res
     .status(201)
     .json({ message: "Class created successfully", data: newClass });
-};
+});
 
 export {createClass}
