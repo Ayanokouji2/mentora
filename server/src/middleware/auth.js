@@ -1,8 +1,10 @@
 import jwt from "jsonwebtoken";
 import { ADMIN_SECRET_KEY, JWT_SECRET_KEY } from "../constant/config.js";
 import { ApiError } from "../utils/error.js";
+import { asyncHandler } from "./error.js";
+import _ from "lodash";
 
-const studentProtectRoute = async (req, res, next) => {
+const studentProtectRoute = asyncHandler(async (req, res, next) => {
   const token = req.cookies.token;
   if (!token) {
     throw new ApiError(401, "Access token is required");
@@ -14,9 +16,9 @@ const studentProtectRoute = async (req, res, next) => {
   }
   req.user = decoded.id;
   next();
-};
+});
 
-const teacherProtectRoute = async (req, res, next) => {
+const teacherProtectRoute = asyncHandler(async (req, res, next) => {
   const token = req.cookies.teacher_token;
   if (!token) {
     throw new ApiError(401, "Access token is required");
@@ -27,9 +29,9 @@ const teacherProtectRoute = async (req, res, next) => {
   }
   req.user = decoded.id;
   next();
-};
+});
 
-const adminProtectRoute = async  (req, res, next) => {
+const adminProtectRoute = asyncHandler(async (req, res, next) => {
   const token = req.cookies.admin_token;
   if (!token) {
     throw new ApiError(401, "Access token is required");
@@ -45,5 +47,5 @@ const adminProtectRoute = async  (req, res, next) => {
     throw new ApiError(401, "Unauthorized");
   }
   next();
-};
-export { studentProtectRoute, teacherProtectRoute ,adminProtectRoute};
+});
+export { studentProtectRoute, teacherProtectRoute, adminProtectRoute };

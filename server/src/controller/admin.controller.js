@@ -1,7 +1,6 @@
 import _ from "lodash";
-import { ADMIN_SECRET_KEY, JWT_SECRET_KEY } from "../constant/config.js";
-
-
+import jwt from "jsonwebtoken";
+import { ADMIN_SECRET_KEY, JWT_SECRET_KEY, options } from "../constant/config.js";
 
 const adminLogin = async (req, res) => {
   const { key } = req.body;

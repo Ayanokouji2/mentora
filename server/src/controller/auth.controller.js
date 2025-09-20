@@ -7,6 +7,7 @@ import {
   generateRandomRegistrationNumber,
   sendToken,
 } from "../utils/utility.js";
+import teacherModel from "../model/teacher.model.js";
 
 const studentSignup = async (req, res) => {
   const {

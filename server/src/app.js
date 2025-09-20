@@ -4,8 +4,8 @@ import cors from "cors";
 import cookieParser from 'cookie-parser'
 import {handleApiError} from './middleware/error.js'
 import authRouter from './router/auth.router.js'
-import { PORT } from "./constant/config.js";
 import adminRouter from './router/admin.router.js'
+import attendanceRouter from "./router/attendance.router.js";
 
 
 
@@ -24,6 +24,7 @@ app.get("/",(req, res)=>{
 
 app.use("/api/v1/auth",authRouter)
 app.use("/api/v1/admin",adminRouter)
+app.use("/api/v1/attendance",attendanceRouter)
 
 
 app.use(handleApiError)
