@@ -34,6 +34,10 @@ const attendanceSchema = new Schema(
       type: Date,
       required: true,
     },
+    subject:{
+      type:String,
+      required:true,
+    }
   },
   { timestamps: true }
 );

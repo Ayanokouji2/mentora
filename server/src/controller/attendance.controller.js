@@ -4,10 +4,27 @@ import studentModel from "../model/student.model.js";
 import attendanceModel from "../model/attendance.model.js";
 import { ApiError } from "../utils/error.js";
 import _ from "lodash";
+import { asyncHandler } from "../middleware/error.js";
+import moment from "moment";
 
-const createAttendance = async (req, res) => {
-  const { class_name, section, period, attendance_stats, sub_teacher, date } =
-    req.body;
+const createAttendance = asyncHandler(async (req, res) => {
+  const {
+    class_name,
+    section,
+    period,
+    attendance_stats,
+    sub_teacher,
+    subject = "maths",
+    date,
+  } = req.body;
+
+  let _date = Date.now();
+
+  if (!date) {
+    _date = moment().toDate(); // current date as Date object
+  } else {
+    _date = moment(date, "DD/MM/YY").toDate(); // parse given date properly
+  }
 
   const isClassExists = await classModel.findOne({ class_name, section });
   if (!isClassExists) {
@@ -35,13 +52,14 @@ const createAttendance = async (req, res) => {
     period,
     attendance_stats: validAttendanceStats,
     sub_teacher: isSubTeacherExists._id,
-    date,
+    date: date ? date : _date,
+    subject,
   });
 
   return res
     .status(201)
     .json({ message: "Attendance created successfully", data: newAttendance });
-};
+});
 
 // const getAttendance = async (req, res) => {
 //   const { class_name, section, date,period } = req.query;
@@ -101,6 +119,22 @@ const deleteAttendance = async (req, res) => {
     .json({ message: "Attendance deleted successfully", data: attendance });
 };
 
+const getStudentAttendaceStats = asyncHandler(async (req, res) => {
+  const _id = req.user;
+  const student = await studentModel.findById(_id);
+  const classDetails = await classModel.findOne({
+    class_name: student.class,
+    section,
+  });
+  const attendace = await attendanceModel.aggregate({
+    $group:{
+      
+    }
+  });
+  return res.status(200).json({
+    success:true,
+    message:"Done"
+  });
+});
 
-
-export { createAttendance, updateAttendance, deleteAttendance, };
+export { createAttendance, updateAttendance, deleteAttendance };
