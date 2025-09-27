@@ -3,8 +3,8 @@ import express from "express";
 import cors from "cors";
 import cookieParser from 'cookie-parser'
 import {handleApiError} from './middleware/error.js'
-import authRouter from './router/auth.router.js'
-import adminRouter from './router/admin.router.js'
+import authRouter from './router/auth.routes.js'
+import adminRouter from './router/admin.routes.js'
 import attendanceRouter from "./router/attendance.routes.js";
 import studentRouter from "./router/student.routes.js";
 
@@ -13,7 +13,10 @@ import studentRouter from "./router/student.routes.js";
 const app = express();
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+    origin: "http://localhost:5000",
+    credentials :true
+}));
 app.use(cookieParser())
 
 
