@@ -95,6 +95,7 @@ const studentLogout = async (req, res) => {
 };
 
 const studentProfile = asyncHandler (async (req, res) => {
+
 	const student = await studentModel.findById(req.user).select("-password");
 	return res
 		.status(200)
