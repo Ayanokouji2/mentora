@@ -1,17 +1,16 @@
-FROM node:22.17.0
+FROM node:22
+
 WORKDIR /app
 
-# Copy package.json and lock file
+# Copy package files first
 COPY package*.json ./
 
-# Install dependencies
-RUN npm install
+# Install dependencies into /app
+RUN npm install --prefix /app
 
-# Copy the rest of the client code
+# Copy source code
 COPY . .
 
-# Expose Vite dev server port
 EXPOSE 5173
 
-# Run the Vite development server
 CMD ["npm", "run", "dev"]

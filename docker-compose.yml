@@ -1,32 +1,36 @@
 version: "3.8"
 
 services:
-    server:
-        build:
-            context: ./server
-            dockerfile: Dockerfile
-        working_dir: /app
-        volumes:
-            - ./server:/app # Mount server code for live reload
-            - /app/node_modules # Preserve container node_modules
-        ports:
-            - "5000:5000" # Map container port 5000 to host
-        command: npm run dev
-        env_file:
-            - ./server/.env 
+  server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    working_dir: /app
+    volumes:
+      - ./server:/app:cached                  # Mount server source code for live reload
+      - server_node_modules:/app/.modules     # node_modules stored outside mounted code
+    ports:
+      - "5000:5000"
+    command: sh -c "npm install --prefix /app && npm run dev"
+    env_file:
+      - ./server/.env
 
-    client:
-        build:
-            context: ./client
-            dockerfile: Dockerfile
-        working_dir: /app
-        volumes:
-            - ./client:/app # Mount client code for live reload
-            - /app/node_modules
-        ports:
-            - "5173:5173" # Vite dev server
-        depends_on:
-            - server
-        command: npm run dev
-        environment:
-            - CHOKIDAR_USEPOLLING=true # Needed for live reload on mounted volumes
+  client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    working_dir: /app
+    volumes:
+      - ./client:/app:cached                  # Mount client source code for live reload
+      - client_node_modules:/app/.modules     # node_modules stored outside mounted code
+    ports:
+      - "5173:5173"
+    depends_on:
+      - server
+    command: sh -c "npm install --prefix /app && npm run dev"
+    environment:
+      - CHOKIDAR_USEPOLLING=true              # Needed for live reload
+
+volumes:
+  server_node_modules:
+  client_node_modules:

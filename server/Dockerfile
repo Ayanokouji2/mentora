@@ -1,10 +1,14 @@
-FROM node:22.17.0
+FROM node:22
 
 WORKDIR /app
 
+# Copy package files first
 COPY package*.json ./
-RUN npm install
 
+# Install dependencies into /app
+RUN npm install --prefix /app
+
+# Copy source code
 COPY . .
 
 EXPOSE 5000
