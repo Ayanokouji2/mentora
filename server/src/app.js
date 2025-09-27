@@ -5,7 +5,7 @@ import cookieParser from 'cookie-parser'
 import {handleApiError} from './middleware/error.js'
 import authRouter from './router/auth.router.js'
 import adminRouter from './router/admin.router.js'
-import attendanceRouter from "./router/attendance.router.js";
+import attendanceRouter from "./router/attendance.routes.js";
 import studentRouter from "./router/student.routes.js";
 
 

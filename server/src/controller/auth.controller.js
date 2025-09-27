@@ -8,6 +8,7 @@ import {
 	sendToken,
 } from "../utils/utility.js";
 import teacherModel from "../model/teacher.model.js";
+import { asyncHandler } from "../middleware/error.js";
 
 const studentSignup = async (req, res) => {
 	const {
@@ -93,12 +94,12 @@ const studentLogout = async (req, res) => {
 	return res.status(200).json({ message: "Student logged out successfully" });
 };
 
-const studentProfile = async (req, res) => {
+const studentProfile = asyncHandler (async (req, res) => {
 	const student = await studentModel.findById(req.user).select("-password");
 	return res
 		.status(200)
 		.json({ success: true, message: "Student profile", data: student });
-};
+});
 
 const teacherProfile = async (req, res) => {
 	const teacher = await teacherModel.findById(req.user).select("-password");
