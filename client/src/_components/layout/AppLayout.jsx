@@ -1,9 +1,13 @@
-import React from 'react'
-
-const AppLayout = ({children}) => {
+import React from "react";
+import Sidebar from "./Sidebar";
+const AppLayout = ({ children }) => {
   return (
-    <div>AppLayout</div>
-  )
-}
+    <div className="flex h-dvh">
+      {" "}
+      <Sidebar />
+      <div className="flex-1 overflow-auto">{children}</div>
+    </div>
+  );
+};
 
-export default AppLayout
+export default AppLayout;
