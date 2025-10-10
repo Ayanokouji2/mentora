@@ -9,6 +9,7 @@ import { userExists, userNotExists } from "./redux/slices/auth";
 
 const Attendance = lazy(() => import("./pages/attendance/Attendance"));
 const Home = lazy(() => import("./pages/home/Home"));
+const StudentLogin = lazy(() => import("./pages/auth/student/Login"));
 
 const App = () => {
   const dispatch = useDispatch();
@@ -39,6 +40,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/attendance" element={<Attendance />} />
+        <Route path="/student-login" element={<StudentLogin />} />
       </Routes>
     </Suspense>
   );
