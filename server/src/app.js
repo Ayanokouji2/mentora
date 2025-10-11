@@ -32,5 +32,6 @@ app.use("/api/v1/student",studentRouter)
 app.use("/api/v1/attendance",attendanceRouter)
 
 
+
 app.use(handleApiError)
 export default app;

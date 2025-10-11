@@ -11,38 +11,22 @@ import teacherModel from "../model/teacher.model.js";
 import { asyncHandler } from "../middleware/error.js";
 
 const studentSignup = async (req, res) => {
-	const {
-		name,
-		email,
-		age,
-		gender,
-		roll,
-		class_name,
-		section,
-		address,
-		phone,
-		password,
-		reg_no,
-		image,
-	} = req.body;
+	const { name, email, gender, class_name, section, password, reg_no } =
+		req.body;
 
-	const student = await studentModel.findOne({ email });
+	const student = await studentModel.findOne({ reg_no });
+
 	if (student) {
 		throw new ApiError(400, "Student already exists");
 	}
+
 	const Class = await classModel.findOne({
 		className: class_name,
 		section: section,
 	});
 
-	// if (!Class) {
-	//   throw new ApiError(400, "Invalid class or section");
-	// }
-
-	const isRegNoExists = await studentModel.findOne({ reg_no });
-
-	if (isRegNoExists) {
-		throw new ApiError(400, "Registration number already exists");
+	if (!Class) {
+		throw new ApiError(400, "Invalid class or section");
 	}
 
 	//TODO: upload photo on multer and save it to db
@@ -50,13 +34,9 @@ const studentSignup = async (req, res) => {
 	const newStudent = await studentModel.create({
 		name,
 		email,
-		age,
 		gender,
-		roll,
 		class_name,
 		section,
-		address,
-		phone,
 		password,
 		reg_no,
 	});
@@ -69,9 +49,9 @@ const studentSignup = async (req, res) => {
 };
 
 const studentLogin = async (req, res) => {
-	const { email, reg_no, password } = req.body;
+	const { reg_no, password } = req.body;
 
-	const student = await studentModel.findOne({ email }).select("+password");
+	const student = await studentModel.findOne({ reg_no }).select("+password");
 
 	if (!student) {
 		throw new ApiError(400, "Student not found");
@@ -84,9 +64,9 @@ const studentLogin = async (req, res) => {
 
 	await sendToken(res, student, 200, `Welcome ${student?.name}`);
 
-	return res
-		.status(200)
-		.json({ message: "Student login successfully", data: student });
+	// return res
+	// 	.status(200)
+	// 	.json({ message: "Student login successfully", data: student });
 };
 
 const studentLogout = async (req, res) => {
@@ -94,8 +74,7 @@ const studentLogout = async (req, res) => {
 	return res.status(200).json({ message: "Student logged out successfully" });
 };
 
-const studentProfile = asyncHandler (async (req, res) => {
-
+const studentProfile = asyncHandler(async (req, res) => {
 	const student = await studentModel.findById(req.user).select("-password");
 	return res
 		.status(200)
@@ -111,8 +90,23 @@ const teacherSignup = async (req, res) => {
 	const { name, email, password, gender, subject, phone, address } = req.body;
 
 	const isTeacherExists = await teacherModel.findOne({ email });
+
 	if (isTeacherExists) {
 		throw new ApiError(400, "Teacher already exists");
+	}
+
+	let unique = false;
+	let newId;
+
+	while (!unique) {
+		const randomNum = generateRandomRegistrationNumber();
+		newId = `TCH${randomNum}`;
+
+		const isUnique = await teacherModel.exists({ teacherId: newId });
+
+		if (!isUnique) {
+			unique = true;
+		}
 	}
 
 	const teacher = await teacherModel.create({
@@ -123,7 +117,9 @@ const teacherSignup = async (req, res) => {
 		subject,
 		phone,
 		address,
+		teacherId : newId
 	});
+
 	await sendToken(
 		res,
 		teacher,
@@ -134,12 +130,15 @@ const teacherSignup = async (req, res) => {
 };
 
 const teacherLogin = async (req, res) => {
-	const { email, password } = req.body;
-	const teacher = await teacherModel.findOne({ email }).select("+password");
+	const { teacherId, password } = req.body;
+	const teacher = await teacherModel
+		.findOne({ teacherId })
+		.select("+password");
 	if (!teacher) {
 		throw new ApiError(400, "Teacher not found");
 	}
 	const isMatch = await bcrypt.compare(password, teacher.password);
+
 	if (!isMatch) {
 		throw new ApiError(400, "Incorrect password");
 	}

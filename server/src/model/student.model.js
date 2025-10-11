@@ -59,6 +59,10 @@ const studentSchema = new Schema(
       max: [20, "Password must be at most 20 characters"],
       select: false,
     },
+    userRole:{
+      type: String,
+      default: "student"
+    }
   },
   { timestamps: true }
 );
