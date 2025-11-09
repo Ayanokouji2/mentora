@@ -17,7 +17,7 @@ const teacherSignupSchema = Joi.object({
 
 
 const teacherLoginSchema = Joi.object({
-    email:Joi.string().email(),
+    teacherId:Joi.string().regex(/^TCH\d{6}$/).required(),
     password:Joi.string().required(),
 })
 

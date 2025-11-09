@@ -1,5 +1,5 @@
 import { Suspense, lazy, useEffect } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import axios from "axios";
 import { Routes, Route } from "react-router-dom";
 import { toast } from "sonner";
@@ -10,14 +10,23 @@ import { userExists, userNotExists } from "./redux/slices/auth";
 const Attendance = lazy(() => import("./pages/attendance/Attendance"));
 const Home = lazy(() => import("./pages/home/Home"));
 const StudentLogin = lazy(() => import("./pages/auth/student/Login"));
+const StudentSignUp = lazy(() => import("./pages/auth/student/SignUp"));
+const TeacherLogin = lazy(() => import("./pages/auth/teacher/Login"));
+const CreateAttendance = lazy(() =>
+  import("./pages/attendance/CreateAttendance")
+);
+const Profile = lazy(() => import("./pages/profile/Profile"));
+const Unauthorized = lazy(() => import("./pages/misc/Unauthorized"));
+const ProtectRoute = lazy(() => import("./_components/auth/protectRoute"));
 
 const App = () => {
   const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
 
   useEffect(() => {
     const getMyProfile = async () => {
       try {
-        const { data } = await axios.get(`${serverUrl}/api/v1/student/profile`, {
+        const { data } = await axios.get(`${serverUrl}/api/v1/auth/me`, {
           withCredentials: true,
         });
         console.log("data", data);
@@ -28,7 +37,9 @@ const App = () => {
         }
       } catch (err) {
         dispatch(userNotExists());
-        toast.error(err.response?.data?.message || err.message || "Something went wrong");
+        toast.error(
+          err.response?.data?.message || err.message || "Something went wrong"
+        );
       }
     };
 
@@ -38,9 +49,26 @@ const App = () => {
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <Routes>
-        <Route path="/" element={<Home />} />
         <Route path="/attendance" element={<Attendance />} />
-        <Route path="/student-login" element={<StudentLogin />} />
+
+        <Route
+          element={
+            <ProtectRoute user={user} allowedRole="teacher" redirect="/" />
+          }
+        >
+          <Route path="/create-attendance" element={<CreateAttendance />} />
+        </Route>
+
+        <Route element={<ProtectRoute user={!user} redirect="/profile" />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/student-login" element={<StudentLogin />} />
+          <Route path="/student-signup" element={<StudentSignUp />} />
+          <Route path="/teacher-login" element={<TeacherLogin />} />
+        </Route>
+
+        <Route path="/profile" element={<Profile />} />
+
+        <Route path="/unauthorized" element={<Unauthorized />} />
       </Routes>
     </Suspense>
   );

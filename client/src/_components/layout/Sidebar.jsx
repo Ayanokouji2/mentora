@@ -3,10 +3,12 @@ import { navLinks } from "../../constants/data";
 import { Link } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { ShoppingBag, PanelRightOpen } from "lucide-react";
+import { useSelector } from "react-redux";
 
 const Sidebar = () => {
   const [isCollapse, setIsCollapse] = useState(false);
-
+  const { user } = useSelector((state) => state.auth);
+  console.log("user", user);
   useEffect(() => {
     const handleResize = () => {
       if (window.innerWidth < 768) {
@@ -53,21 +55,28 @@ const Sidebar = () => {
 
       {/* Links */}
       <div className="flex flex-col gap-3 flex-1 overflow-y-auto w-full">
-        {navLinks?.map(({ id, link, name, icon: Icon }) => (
-          <Link
-            key={id}
-            to={link}
-            className={`flex items-center p-2 rounded-md hover:bg-white hover:shadow-sm transition-all duration-200
-             ${isCollapse ? "justify-center" : "gap-3"}`}
-          >
-            {Icon}
-            {!isCollapse && <span>{name}</span>}
-          </Link>
-        ))}
+        {navLinks?.map(({ id, link, name, icon: Icon, permission }) => {
+          // TODO: change the boolean to false if user is not logged in
+          const is_allowed = user ? permission?.includes(user?.userRole) : true;
+          return (
+            <Link
+              key={id}
+              to={link}
+              className={`flex items-center p-2 rounded-md hover:bg-white hover:shadow-sm transition-all duration-200
+             ${isCollapse ? "justify-center" : "gap-3"} ${
+                !is_allowed ? "hidden" : "block"
+              } `}
+              disabled={!is_allowed}
+            >
+              {Icon}
+              {!isCollapse && <span>{name}</span>}
+            </Link>
+          );
+        })}
       </div>
 
       {/* Footer / Button */}
-      <div className="mt-4 w-full">
+      {/* <div className="mt-4 w-full">
         {isCollapse ? (
           <Button size="icon">
             <span className="text-sm">L</span>
@@ -75,7 +84,7 @@ const Sidebar = () => {
         ) : (
           <Button className="w-full">Login</Button>
         )}
-      </div>
+      </div> */}
     </div>
   );
 };

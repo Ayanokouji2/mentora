@@ -2,7 +2,7 @@
 const options = {
   httpOnly: true,
   secure: false,
-  maxAge: 1000 * 60 * 30,
+  maxAge: 1000 * 60 * 30 *24,
 };
 
 const PORT = process.env.PORT || 5000;

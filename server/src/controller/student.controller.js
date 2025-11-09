@@ -4,7 +4,7 @@ import { ApiError } from "../utils/error.js";
 import _ from "lodash";
 
 const geStudentsList = async (req, res) => {
-  const { class_name, section } = req.body;
+  const { class_name, section,period,date } = req.body;
 
   const isClassExists = await classModel.find({ class_name, section });
 

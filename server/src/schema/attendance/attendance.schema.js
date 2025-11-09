@@ -9,5 +9,10 @@ const rollCallSchema = Joi.object({
   date: Joi.date().optional(),
   subject:Joi.string().required()
 });
-
-export { rollCallSchema };
+const generateAttendanceSheetSchema = Joi.object({
+  class_name: Joi.string().required(),
+  section: Joi.string().required().allow("A", "B", "C", "D", "E"),
+  period: Joi.string().required(),
+  date: Joi.date().required(),
+});
+export { rollCallSchema,generateAttendanceSheetSchema };

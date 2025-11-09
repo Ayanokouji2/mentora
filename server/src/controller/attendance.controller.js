@@ -6,6 +6,7 @@ import { ApiError } from "../utils/error.js";
 import _ from "lodash";
 import { asyncHandler } from "../middleware/error.js";
 import moment from "moment";
+import sessionModel from "../model/session.model.js";
 
 const createAttendance = asyncHandler(async (req, res) => {
   const {
@@ -127,14 +128,78 @@ const getStudentAttendaceStats = asyncHandler(async (req, res) => {
     section,
   });
   const attendace = await attendanceModel.aggregate({
-    $group:{
-      
-    }
+    $group: {},
   });
   return res.status(200).json({
-    success:true,
-    message:"Done"
+    success: true,
+    message: "Done",
+  });
+});
+const generateAttendanceSheet = asyncHandler(async (req, res) => {
+  const { class_name, section, period, date } = req.body;
+  const isClassExists = await classModel.findOne({ class_name, section });
+  if (!isClassExists) {
+    throw new ApiError(400, "Class not found");
+  }
+
+  const currentSession = await sessionModel.findOne({isActive:true});
+
+  if(_.isEmpty(currentSession)) {
+    throw new ApiError(400, "No active session found");
+  }
+
+  const { endDate } = currentSession;
+  if (date > endDate) {
+    throw new ApiError(400, "Date doesn't matches any session");
+  }
+
+  const attendance = await attendanceModel.findOne({
+    class: isClassExists._id,
+    period,
+    date,
+  });
+  
+
+  if (!_.isEmpty(attendance)) {
+    return res.status(200).json({
+      success: true,
+      message: "Attendance",
+      data: attendance,
+    });
+  }
+
+  const students = await studentModel
+    .find({
+      class_name,
+      section,
+      // session: isClassExists.session,
+    })
+    .populate(
+      "student",
+      "name image roll reg_no phone gender class_name section"
+    );
+
+  const attendanceSheet = {
+    class_name,
+    section,
+    period,
+    date,
+    record: students.map((student) => ({
+      student: student,
+      status: "absent",
+    })),
+  };
+
+  return res.status(200).json({
+    success: true,
+    message: "Attendance",
+    data: attendanceSheet,
   });
 });
 
-export { createAttendance, updateAttendance, deleteAttendance };
+export {
+  createAttendance,
+  updateAttendance,
+  deleteAttendance,
+  generateAttendanceSheet,
+};

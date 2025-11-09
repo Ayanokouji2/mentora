@@ -6,6 +6,7 @@ import {
 } from "../schema/student/auth.schema.js";
 
 import {
+  getProfile,
   studentLogin,
   studentLogout,
   studentSignup,
@@ -21,6 +22,13 @@ import {
 
 
 const authRouter = Router();
+
+// common auth profile
+
+authRouter
+  .route("/me")
+  .get(getProfile);
+
 // student auth route
 authRouter
   .route("/student/signup")
