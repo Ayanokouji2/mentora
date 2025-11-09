@@ -59,17 +59,19 @@ const teacherSchema = new Schema(
 	{ timestamps: true }
 );
 
-const teacherModel =
-	mongoose.models.teacher || mongoose.model("teacher", teacherSchema);
-
 teacherSchema.pre("save", async function (next) {
 	if (!this.isModified("password")) {
 		return next();
 	}
-	this.password = await bcrypt.hash(this.password, 10);
+	const hashpassword = await bcrypt.hash(this.password, 10);
+
+	this.password = hashpassword;
 	next();
 });
 
+
+const teacherModel =
+	mongoose.models.teacher || mongoose.model("teacher", teacherSchema);
 
 
 export default teacherModel;
