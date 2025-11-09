@@ -1,7 +1,7 @@
 import React from "react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import {
   Popover,
   PopoverContent,
@@ -12,18 +12,24 @@ import { Button } from "@/components/ui/button";
 import axios from "axios";
 import { serverUrl } from "../../constants/config";
 import { toast } from "sonner";
+import { userNotExists } from "../../redux/slices/auth";
+
 
 const Header = () => {
   const { user } = useSelector((state) => state.auth);
+  const dispatch = useDispatch();
   console.log("user", user);
   const handleLogout = async () => {
     const url =
       user?.userRole === "student"
         ? `${serverUrl}/api/v1/auth/student/logout`
         : `${serverUrl}/api/v1/auth/teacher/logout`;
+    console.log("url", url);
     try {
       const { data } = await axios.post(url, { withCredentials: true });
+      console.log(data)
       if (data.success) {
+        dispatch(userNotExists());
         toast.success("User logged out ");
       }
     } catch (error) {

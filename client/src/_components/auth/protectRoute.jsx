@@ -9,7 +9,7 @@ const ProtectRoute = ({ user, allowedRole = "student", redirect = "/" }) => {
   }
 
   // Check if the user's role matches the allowed role
-  if (allowedRole && user.userRole !== allowedRole) {
+  if (user?.userRole!=undefined && allowedRole && user?.userRole !== allowedRole) {
     return <Navigate to="/unauthorized" replace />;
   }
 

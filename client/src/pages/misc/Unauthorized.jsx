@@ -1,9 +1,9 @@
 import { Button } from "@/components/ui/button";
 import { ShieldAlert } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useNavigate } from "react-router-dom";
 
 export default function Unauthorized() {
-  const router = useRouter();
+  const navigate = useNavigate();
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-50 px-4">
@@ -23,7 +23,7 @@ export default function Unauthorized() {
         <div className="mt-6 space-y-3">
           <Button
             className="w-full"
-            onClick={() => router.push("/")}
+            onClick={() => navigate("/")}
           >
             Go to Login
           </Button>
@@ -31,7 +31,7 @@ export default function Unauthorized() {
           <Button
             variant="outline"
             className="w-full"
-            onClick={() => router.back()}
+            onClick={() => navigate("/profile")}
           >
             Go Back
           </Button>

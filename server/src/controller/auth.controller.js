@@ -12,7 +12,6 @@ import { asyncHandler } from "../middleware/error.js";
 import jwt from "jsonwebtoken";
 import { JWT_SECRET_KEY } from "../constant/config.js";
 
-
 const studentSignup = async (req, res) => {
   const { name, email, gender, class_name, section, password, reg_no } =
     req.body;
@@ -57,18 +56,20 @@ const getProfile = asyncHandler(async (req, res) => {
 
   let data = [];
   if (is_student) {
-	const {id}=await jwt.verify(is_student, JWT_SECRET_KEY);
+    const { id } = await jwt.verify(is_student, JWT_SECRET_KEY);
     const student = await studentModel.findById(id).select("-password");
     data = student;
   } else if (is_teacher) {
-	const {id}=await jwt.verify(is_teacher, JWT_SECRET_KEY);
+    const { id } = await jwt.verify(is_teacher, JWT_SECRET_KEY);
     const teacher = await teacherModel.findById(id).select("-password");
     data = teacher;
   } else {
     throw new ApiError(400, "No user logged in");
   }
 
-  return res.status(200).json({ success: true, message: "Profile", data: data });
+  return res
+    .status(200)
+    .json({ success: true, message: "Profile", data: data });
 });
 
 const studentLogin = async (req, res) => {
@@ -172,10 +173,12 @@ const teacherLogin = async (req, res) => {
   );
 };
 
-const teacherLogout = async (req, res) => {
+const teacherLogout = asyncHandler((req, res) => {
   res.cookie("teacher_token", "", { ...options, maxAge: 0 });
-  return res.status(200).json({ message: "Teacher logged out successfully" });
-};
+  return res
+    .status(200)
+    .json({ success: true, message: "Teacher logged out successfully" });
+});
 
 export {
   studentSignup,

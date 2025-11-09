@@ -49,14 +49,14 @@ const App = () => {
   return (
     <Suspense fallback={<div>Loading...</div>}>
       <Routes>
-        <Route path="/attendance" element={<Attendance />} />
-
         <Route
           element={
             <ProtectRoute user={user} allowedRole="teacher" redirect="/" />
           }
         >
+          <Route path="/attendance" element={<Attendance />} />
           <Route path="/create-attendance" element={<CreateAttendance />} />
+          <Route path="/profile" element={<Profile />} />
         </Route>
 
         <Route element={<ProtectRoute user={!user} redirect="/profile" />}>
@@ -65,8 +65,6 @@ const App = () => {
           <Route path="/student-signup" element={<StudentSignUp />} />
           <Route path="/teacher-login" element={<TeacherLogin />} />
         </Route>
-
-        <Route path="/profile" element={<Profile />} />
 
         <Route path="/unauthorized" element={<Unauthorized />} />
       </Routes>
